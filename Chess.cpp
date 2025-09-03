@@ -2,52 +2,9 @@
 #include <string>
 #include <ctime>
 
-enum Collums {A , B , C , D , E , F , G ,H}; // This uses makes the letter for Rows on the board, into valid input numbers.
-enum Color {White , Black};
-
 void Board(char PlayMat[8][8]);
 int MovePlayer(int &points, char piece, char PlayMat[8][8]);
 int MoveAI(char piece, char PlayMat[8][8]);
-
-
-class Piece {
-    public:
-    char Symbol;
-    bool alive = true;
-    Color color;
-
-};
-
-class Pawn : public Piece {
-    char Symbol = 'p';
-};
-
-class Rook : public Piece{
-    public:
- char Symbol;
-};
-
-class Knight : public Piece{
-    public:
-    char Symbol = 'n';
-};
-
-class Bishop : public Piece{
-    public:
-    char Symbol = 'b';
-};
-
-class Queen : public Piece{
-    public:
-    char Symbol = 'q';
-};
-
-class King : public Piece{
-    public:
-    char Symbol = 'k';
-};
-
-
 
 int main(){
 
@@ -237,10 +194,11 @@ int MovePlayer(int &points, char piece, char PlayMat[8][8]){
     //KNIGHT
     if (PlayMat[Select_Row][Select_Collumn] == 'N'){
         std::cout << " Please select where you want to move the piece. (Use positive numbers to go up/right , and negative to go down/left). " << '\n';
-
+        std::cout << "Select the number of tiles to move foward . (No more than 2 or less than -2)." << '\n';
         std::cin >> move_Vertical;
-        std::cin >> move_Horizontal;
         std::cout << " Move in an L shape. (3x2 / 2x3)." <<'\n';
+        std::cout << "Select the number of tiles to move to the sides . (No more than 2 or less than -2)." << '\n';
+        std::cin >> move_Horizontal;
 
         if((move_Vertical == 2 && move_Horizontal == 1) ||
             (move_Vertical == 2 && move_Horizontal == -1) ||
@@ -341,16 +299,38 @@ int MovePlayer(int &points, char piece, char PlayMat[8][8]){
 
     //BISHOP
     if (PlayMat[Select_Row][Select_Collumn] == 'B'){
-        std::cout << " Please select where you want to move the piece. (You can only move diagonally)." << '\n';
+        std::cout << " (You can only move diagonally)." << '\n';
+        std::cout << " Please chose how many tiles to move foward(YOU NEED THE EXACT SAME NUMBER FOR THE HORIZONTAL TOO). " << '\n';
+        std::cin >> move_Vertical;
+        std::cout << " Please chose how many tiles to move(YOU NEED THE EXACT SAME NUMBER FOR THE VERTICAL TOO). " << '\n';
+        std::cin >> move_Horizontal;
 
-        if(PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'P' ||
+        if(move_Horizontal == move_Vertical){
+
+            if(PlayMat[StartRow - startCol][startCol - move_Horizontal] == ' '){
+                    PlayMat[StartRow - startCol][startCol - move_Horizontal] = 'Q';
+                    PlayMat[StartRow][startCol] = ' ';
+            }
+                
+            else if(PlayMat[StartRow - startCol][startCol - move_Horizontal] != ' '){
+                    PlayMat[StartRow - startCol][startCol - move_Horizontal] = 'Q';
+                    PlayMat[StartRow][startCol] = ' ';
+                    points++;
+            }
+
+            if(PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'P' ||
                 PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'K' ||
                 PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'N' ||
                 PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'B' ||
                 PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'R' ||
                 PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'Q'){
                     std::cout << "You can't go over your own pieces !" <<'\n';
-                }
+            }
+
+            else if(move_Horizontal != move_Vertical){
+                std::cout << "You didn't move vertically." <<'\n';
+            }    
+            }
     }
 
     //QUEEN
@@ -358,9 +338,47 @@ int MovePlayer(int &points, char piece, char PlayMat[8][8]){
         std::cout << " Please select where you want to move the piece.(Type 1 for vertical, 2 for horizontal, 3 for vertical). " << '\n';
         std::cin >> type;
         if(type == 1){
+        std::cout << "Enter how many spaces you want to move. (Positive to move foward, and negative to move backwards.)" << '\n';
+        std::cin >> move_Vertical;
+
+        if(PlayMat[StartRow - move_Vertical][startCol] == ' '){
+                PlayMat[StartRow - move_Vertical][startCol] = 'Q';
+                PlayMat[StartRow][startCol] = ' ';
+            }
+
+        else if(PlayMat[StartRow - move_Vertical][startCol] != ' '){
+                PlayMat[StartRow - move_Vertical][startCol] = 'Q';
+                PlayMat[StartRow][startCol] = ' ';
+                points++;
+            }
+
+        else if(PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'P' ||
+                PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'K' ||
+                PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'N' ||
+                PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'B' ||
+                PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'R' ||
+                PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'Q'){
+                    std::cout << "You can't go over your own pieces !" <<'\n';
+                }                
+        }
+        
+
+        if(type == 2){
             std::cout << "Enter how many spaces you want to move. " << '\n';
+            std::cin >> move_Horizontal;
 
-              if(PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'P' ||
+        if(PlayMat[StartRow][startCol - move_Horizontal] == ' '){
+                PlayMat[StartRow][startCol - move_Horizontal] = 'Q';
+                PlayMat[StartRow][startCol] = ' ';
+            }
+
+        else if(PlayMat[StartRow][startCol - move_Horizontal] != ' '){
+                PlayMat[StartRow][startCol - move_Horizontal] = 'Q';
+                PlayMat[StartRow][startCol] = ' ';
+                points++;
+            }
+
+              else if(PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'P' ||
                 PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'K' ||
                 PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'N' ||
                 PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'B' ||
@@ -370,29 +388,37 @@ int MovePlayer(int &points, char piece, char PlayMat[8][8]){
                 }                
         }
         
+        if(type == 3){
+            std::cout << " Please chose how many tiles to move foward(YOU NEED THE EXACT SAME NUMBER FOR THE HORIZONTAL TOO). " << '\n';
+            std::cin >> move_Vertical;
+            std::cout << " Please chose how many tiles to move(YOU NEED THE EXACT SAME NUMBER FOR THE VERTICAL TOO). " << '\n';
+            std::cin >> move_Horizontal;
 
-        if(type == 2){
+            if(move_Horizontal == move_Vertical){
 
-              if(PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'P' ||
+                if(PlayMat[StartRow - startCol][startCol - move_Horizontal] == ' '){
+                    PlayMat[StartRow - startCol][startCol - move_Horizontal] = 'Q';
+                    PlayMat[StartRow][startCol] = ' ';
+                }
+                
+                else if(PlayMat[StartRow - startCol][startCol - move_Horizontal] != ' '){
+                    PlayMat[StartRow - startCol][startCol - move_Horizontal] = 'Q';
+                    PlayMat[StartRow][startCol] = ' ';
+                    points++;
+                }
+
+                else if(PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'P' ||
                 PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'K' ||
                 PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'N' ||
                 PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'B' ||
                 PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'R' ||
                 PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'Q'){
                     std::cout << "You can't go over your own pieces !" <<'\n';
-                }                
-        }
-        
-        if(type == 2){
-
-              if(PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'P' ||
-                PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'K' ||
-                PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'N' ||
-                PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'B' ||
-                PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'R' ||
-                PlayMat[Select_Row - move_Vertical][Select_Collumn - move_Horizontal] == 'Q'){
-                    std::cout << "You can't go over your own pieces !" <<'\n';
-                }                
+                }
+            else if(move_Horizontal != move_Vertical){
+                std::cout << "You didn't move vertically." <<'\n';
+            }    
+            }
         }
     }
 
